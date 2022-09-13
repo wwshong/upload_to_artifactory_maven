@@ -41,7 +41,7 @@ pipeline {
                 rtMavenDeployer(
                         id: 'deployer-unique-id',
                         serverId: 'jenkins-jfrog-integ',
-						includePatterns: '**/target/*.jar',
+						deployArtifacts: '**/target/*.jar',
                         releaseRepo: 'example-repo-local',
                         snapshotRepo: 'example-repo-local'
                 )
