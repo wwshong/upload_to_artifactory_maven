@@ -42,14 +42,14 @@ pipeline {
          "files": [
            {
              "pattern": "${WORKSPACE}/target/*.jar",
-             "target": "example-repo-local"
+             "target": "libs-snapshot"
            }, {
              "pattern": "**/target/*.pom",
              "target": "/"
            }, {
              "pattern": "${WORKSPACE}/*.txt",
 			 
-			"target": "example-repo-local" 
+			"target": "libs-snapshot" 
            }
          ]
        }"""
