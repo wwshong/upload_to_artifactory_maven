@@ -41,7 +41,7 @@ pipeline {
        def uploadSpec = """{
          "files": [
            {
-             "pattern": "**/target/*.jar",
+             "pattern": "${WORKSPACE}/target/*.jar",
              "target": "/"
            }, {
              "pattern": "**/target/*.pom",
