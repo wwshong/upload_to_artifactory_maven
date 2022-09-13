@@ -29,7 +29,7 @@ pipeline {
 
         stage("upload artifacts") {
             steps {
-			 echo "jenkins publishes artifacts to jfrog"
+			 /*echo "jenkins publishes artifacts to jfrog"
 			rtBuildInfo(captureEnv: true)
 
                 rtMavenResolver (
@@ -54,7 +54,36 @@ pipeline {
                         deployerId: 'deployer-unique-id'
                 )
 
-                rtPublishBuildInfo(serverId: 'jenkins-jfrog-integ')
+                rtPublishBuildInfo(serverId: 'jenkins-jfrog-integ')*/
+						  script {
+			  
+			  
+
+			 def server = Artifactory.server "jenkins-jfrog-integ"
+       def buildInfo = Artifactory.newBuildInfo()
+       buildInfo.env.capture = true
+       buildInfo.env.collect()
+       def uploadSpec = """{
+         "files": [
+           {
+             "pattern": "**/target/*.jar",
+             "target": "/"
+           }, {
+             "pattern": "**/target/*.pom",
+             "target": "/"
+           }, {
+             "pattern": "${WORKSPACE}/*.txt",
+			 
+			"target": "example-repo-local" 
+           }
+         ]
+       }"""
+       // Upload to Artifactory.
+       server.upload spec: uploadSpec, buildInfo: buildInfo
+       buildInfo.retention maxBuilds: 10, maxDays: 7, deleteBuildArtifacts: true
+       // Publish build info.
+       server.publishBuildInfo buildInfo
+	   }
 		    }
 		}
 	}
