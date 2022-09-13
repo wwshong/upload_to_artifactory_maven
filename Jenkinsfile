@@ -6,10 +6,24 @@ pipeline {
     }
 
     stages {
-        stage("create artifacts") {
+        stage("Compile") {
             steps {
-     
-                 sh 'echo jenkins publishes artifacts to jfrog >> jenkins-jfog.txt '
+                sh "mvn clean compile"
+            }
+        }
+        stage("Unit Tests") {
+            steps {
+                sh "mvn test"
+            }
+        }
+        stage("Integration Tests") {
+            steps {
+                sh "mvn verify"
+            }
+        }
+        stage("Package") {
+            steps {
+                sh "mvn package -DskipTests=true"
             }
         }
 
@@ -32,7 +46,7 @@ pipeline {
                 )
 
                 rtMavenRun(
-                        tool: "apache-maven-3.6.3", // using Maven configured under Jenkins Global Tools
+                        tool: "maven 3.8.6", // using Maven configured under Jenkins Global Tools
                         pom: "pom.xml",
                         goals: "clean install -DskipTests=true",
                         resolverId: 'resolver-unique-id',
