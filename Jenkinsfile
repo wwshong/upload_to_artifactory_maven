@@ -42,7 +42,7 @@ pipeline {
          "files": [
            {
              "pattern": "${WORKSPACE}/target/*.jar",
-             "target": "/"
+             "target": "example-repo-local"
            }, {
              "pattern": "**/target/*.pom",
              "target": "/"
