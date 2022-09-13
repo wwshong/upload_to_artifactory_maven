@@ -33,31 +33,26 @@ pipeline {
 						  script {
 			  
 			  
+                rtBuildInfo(captureEnv: true)
 
-			 def server = Artifactory.server "jenkins-jfrog-integ"
-       def buildInfo = Artifactory.newBuildInfo()
-       buildInfo.env.capture = true
-       buildInfo.env.collect()
-       def uploadSpec = """{
-         "files": [
-           {
-             "pattern": "${WORKSPACE}/target/*.jar",
-             "target": "libs-snapshot"
-           }, {
-             "pattern": "**/target/*.pom",
-             "target": "/"
-           }, {
-             "pattern": "${WORKSPACE}/*.txt",
-			 
-			"target": "libs-snapshot" 
-           }
-         ]
-       }"""
-       // Upload to Artifactory.
-       server.upload spec: uploadSpec, buildInfo: buildInfo
-       buildInfo.retention maxBuilds: 10, maxDays: 7, deleteBuildArtifacts: true
-       // Publish build info.
-       server.publishBuildInfo buildInfo
+                
+                rtMavenDeployer(
+                        id: 'deployer-unique-id',
+                        serverId: 'jenkins-jfrog-integ',
+                        releaseRepo: 'libs-release',
+                        snapshotRepo: 'libs-snapshot',
+                        includePatterns: ["*.jar"]
+                )
+
+                rtMavenRun(
+                        tool: "maven 3.8.6", // using Maven configured under Jenkins Global Tools
+                        pom: "pom.xml",
+                        goals: "clean install package -DskipTests=true",
+                        
+                        deployerId: 'deployer-unique-id'
+                )
+
+                rtPublishBuildInfo(serverId: 'jenkins-jfrog-integ')
 	   }
 		    }
 		}
